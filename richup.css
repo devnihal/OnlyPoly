@@ -1397,19 +1397,19 @@
     outline: 0
 }
 
-.z8cEagq4 {
+.DiceContainer {
     perspective: 1000px;
     position: relative;
     transition: transform .5s cubic-bezier(.75, 0, .5, 1);
     padding: 1.59155078rem 1.25rem
 }
 
-.z8cEagq4.L-OjmNx- {
+.DiceContainer.DiceInstance {
     transform: translateY(-5rem);
     transition-timing-function: cubic-bezier(0, 0, 0, 1)
 }
 
-.z8cEagq4:before {
+.DiceContainer:before {
     content: "";
     position: absolute;
     bottom: 1rem;
@@ -1427,17 +1427,17 @@
     opacity: .3
 }
 
-.L-OjmNx-.z8cEagq4:before {
+.DiceInstance.DiceContainer:before {
     transform: translateY(5rem) scale(.75);
     opacity: .075
 }
 
-.k2l1CwEs {
+.DiceRoot {
     transform-style: preserve-3d;
     transform: rotateX(35deg) rotate(45deg)
 }
 
-.y8Q-UqoT {
+.DiceFace {
     background: #fff;
     box-shadow: inset 0 0 1em .25em #d9d9d9;
     width: 5rem;
@@ -1459,7 +1459,7 @@
     backface-visibility: hidden
 }
 
-.y8Q-UqoT .BGpK5gvF {
+.DiceFace .DiceDot {
     width: .7499625rem;
     height: .7499625rem;
     border-radius: 50%;
@@ -1468,7 +1468,7 @@
     backface-visibility: hidden
 }
 
-.y8Q-UqoT:after {
+.DiceFace:after {
     content: "";
     position: absolute;
     top: 0;
@@ -1481,28 +1481,28 @@
     backface-visibility: hidden
 }
 
-.y8Q-UqoT._3fDJUgYo,
-.y8Q-UqoT.d4NdLJuk {
+.DiceFace._3fDJUgYo,
+.DiceFace.d4NdLJuk {
     transition-duration: .2s;
     transition-delay: .3s
 }
 
-.y8Q-UqoT._3fDJUgYo .BGpK5gvF,
-.y8Q-UqoT.d4NdLJuk .BGpK5gvF {
+.DiceFace._3fDJUgYo .DiceDot,
+.DiceFace.d4NdLJuk .DiceDot {
     opacity: .75;
     transition: inherit;
     transition-property: opacity
 }
 
-.y8Q-UqoT._3fDJUgYo {
+.DiceFace._3fDJUgYo {
     background: #d9d9d9
 }
 
-.y8Q-UqoT.d4NdLJuk {
+.DiceFace.d4NdLJuk {
     background: #c7c7c7
 }
 
-.Zbc4gzb- {
+.DiceCube {
     position: relative;
     width: 5rem;
     height: 5rem;
@@ -1510,111 +1510,111 @@
     transition: 1s cubic-bezier(0, 0, 0, 1)
 }
 
-.y8Q-UqoT[data-side="2"] {
+.DiceFace[data-side="2"] {
     transform: rotateX(90deg) translateZ(2.5rem)
 }
 
-.y8Q-UqoT[data-side="2"] .BGpK5gvF:nth-child(1) {
+.DiceFace[data-side="2"] .DiceDot:nth-child(1) {
     grid-area: one
 }
 
-.y8Q-UqoT[data-side="2"] .BGpK5gvF:nth-child(2) {
+.DiceFace[data-side="2"] .DiceDot:nth-child(2) {
     grid-area: nine
 }
 
-.y8Q-UqoT[data-side="4"] {
+.DiceFace[data-side="4"] {
     transform: rotateY(-90deg) translateZ(2.5rem)
 }
 
-.y8Q-UqoT[data-side="4"] .BGpK5gvF:nth-child(1) {
+.DiceFace[data-side="4"] .DiceDot:nth-child(1) {
     grid-area: one
 }
 
-.y8Q-UqoT[data-side="4"] .BGpK5gvF:nth-child(2) {
+.DiceFace[data-side="4"] .DiceDot:nth-child(2) {
     grid-area: three
 }
 
-.y8Q-UqoT[data-side="4"] .BGpK5gvF:nth-child(3) {
+.DiceFace[data-side="4"] .DiceDot:nth-child(3) {
     grid-area: seven
 }
 
-.y8Q-UqoT[data-side="4"] .BGpK5gvF:nth-child(4) {
+.DiceFace[data-side="4"] .DiceDot:nth-child(4) {
     grid-area: nine
 }
 
-.y8Q-UqoT[data-side="6"] {
+.DiceFace[data-side="6"] {
     transform: translateZ(2.5rem)
 }
 
-.y8Q-UqoT[data-side="6"] .BGpK5gvF:nth-child(1) {
+.DiceFace[data-side="6"] .DiceDot:nth-child(1) {
     grid-area: one
 }
 
-.y8Q-UqoT[data-side="6"] .BGpK5gvF:nth-child(2) {
+.DiceFace[data-side="6"] .DiceDot:nth-child(2) {
     grid-area: three
 }
 
-.y8Q-UqoT[data-side="6"] .BGpK5gvF:nth-child(3) {
+.DiceFace[data-side="6"] .DiceDot:nth-child(3) {
     grid-area: four
 }
 
-.y8Q-UqoT[data-side="6"] .BGpK5gvF:nth-child(4) {
+.DiceFace[data-side="6"] .DiceDot:nth-child(4) {
     grid-area: six
 }
 
-.y8Q-UqoT[data-side="6"] .BGpK5gvF:nth-child(5) {
+.DiceFace[data-side="6"] .DiceDot:nth-child(5) {
     grid-area: seven
 }
 
-.y8Q-UqoT[data-side="6"] .BGpK5gvF:nth-child(6) {
+.DiceFace[data-side="6"] .DiceDot:nth-child(6) {
     grid-area: nine
 }
 
-.y8Q-UqoT[data-side="3"] {
+.DiceFace[data-side="3"] {
     transform: rotateY(90deg) translateZ(2.5rem)
 }
 
-.y8Q-UqoT[data-side="3"] .BGpK5gvF:nth-child(1) {
+.DiceFace[data-side="3"] .DiceDot:nth-child(1) {
     grid-area: one
 }
 
-.y8Q-UqoT[data-side="3"] .BGpK5gvF:nth-child(2) {
+.DiceFace[data-side="3"] .DiceDot:nth-child(2) {
     grid-area: five
 }
 
-.y8Q-UqoT[data-side="3"] .BGpK5gvF:nth-child(3) {
+.DiceFace[data-side="3"] .DiceDot:nth-child(3) {
     grid-area: nine
 }
 
-.y8Q-UqoT[data-side="5"] {
+.DiceFace[data-side="5"] {
     transform: rotateX(-90deg) translateZ(2.5rem)
 }
 
-.y8Q-UqoT[data-side="5"] .BGpK5gvF:nth-child(1) {
+.DiceFace[data-side="5"] .DiceDot:nth-child(1) {
     grid-area: one
 }
 
-.y8Q-UqoT[data-side="5"] .BGpK5gvF:nth-child(2) {
+.DiceFace[data-side="5"] .DiceDot:nth-child(2) {
     grid-area: three
 }
 
-.y8Q-UqoT[data-side="5"] .BGpK5gvF:nth-child(3) {
+.DiceFace[data-side="5"] .DiceDot:nth-child(3) {
     grid-area: five
 }
 
-.y8Q-UqoT[data-side="5"] .BGpK5gvF:nth-child(4) {
+.DiceFace[data-side="5"] .DiceDot:nth-child(4) {
     grid-area: seven
 }
 
-.y8Q-UqoT[data-side="5"] .BGpK5gvF:nth-child(5) {
+.DiceFace[data-side="5"] .DiceDot:nth-child(5) {
     grid-area: nine
 }
 
-.y8Q-UqoT[data-side="1"] {
+.DiceFace[data-side="1"] {
     transform: rotateX(-180deg) translateZ(2.5rem)
 }
 
-.y8Q-UqoT[data-side="1"] .BGpK5gvF:nth-child(1) {
+.DiceFace[data-side="1"] .DiceDot:nth-child(1) {
     grid-area: five
 }
 
@@ -1766,7 +1766,7 @@
     border-radius: 10em
 }
 
-.GPMPBa6i {
+.PlayerToken {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1776,54 +1776,54 @@
     position: relative
 }
 
-.GPMPBa6i svg {
+.PlayerToken svg {
     width: 100%;
     height: 100%;
     flex-shrink: 0;
     position: absolute
 }
 
-.GPMPBa6i._1D0JBEDw svg {
+.PlayerToken._1D0JBEDw svg {
     height: auto;
     width: 100%;
     transform: translateY(-31%)
 }
 
-.GPMPBa6i._3UyME1zx svg {
+.PlayerToken._3UyME1zx svg {
     transform: scale(1.225) translate(7.5%) translateY(-7.5%)
 }
 
-.GPMPBa6i.uagBqIT2 svg {
+.PlayerToken.uagBqIT2 svg {
     height: auto;
     width: 100%;
     transform: translateY(-15%)
 }
 
-.GPMPBa6i.EFgfLJ2O svg {
+.PlayerToken.GameBoardContainerfLJ2O svg {
     height: auto;
     width: 100%;
     transform: translateY(-6%)
 }
 
-.GPMPBa6i.fXQYHWbg svg {
+.PlayerToken.fXQYHWbg svg {
     height: auto;
     width: 100%;
     transform: translateY(-11%)
 }
 
-.GPMPBa6i.CWvr6Px8 svg {
+.PlayerToken.CWvr6Px8 svg {
     height: 100%;
     width: auto;
     transform: scale(.95) translateY(5%)
 }
 
-.GPMPBa6i.z3mfoxE6 svg {
+.PlayerToken.z3mfoxE6 svg {
     height: 100%;
     width: auto;
     transform: scale(1) translateY(0) translate(2%)
 }
 
-.GPMPBa6i.bJRmf0SQ svg {
+.PlayerToken.bJRmf0SQ svg {
     height: auto;
     width: 100%;
     transform: translateY(-23%) translate(3%) scale(1.09)
@@ -3643,7 +3643,7 @@
     box-shadow: 0 1em 2em #0000001a, 0 .25em .5em #0003
 }
 
-.Jlo2gcXV .MbUT8zxv {
+.Jlo2gcXV .DiceWrapperT8zxv {
     display: flex
 }
 
@@ -7077,7 +7077,7 @@ body.in-an-iframe .AviLvLPG {
     margin-top: 4rem
 }
 
-.D8mtfl-S {
+.BoardTile {
     background-color: #262a4c;
     background-image: linear-gradient(to bottom right, #262a4c, #2f264c);
     color: #fff;
@@ -7093,31 +7093,31 @@ body.in-an-iframe .AviLvLPG {
     position: relative
 }
 
-.D8mtfl-S.richup-block-left {
+.BoardTile.richup-block-left {
     writing-mode: vertical-rl;
     transform: rotate(.04deg)
 }
 
-.D8mtfl-S.richup-block-left svg,
-.D8mtfl-S.richup-block-left img {
+.BoardTile.richup-block-left svg,
+.BoardTile.richup-block-left img {
     transform: rotate(90deg)
 }
 
-.D8mtfl-S.richup-block-right {
+.BoardTile.richup-block-right {
     writing-mode: vertical-rl;
     transform: rotate(180.04deg)
 }
 
-.D8mtfl-S.richup-block-right svg,
-.D8mtfl-S.richup-block-right img {
+.BoardTile.richup-block-right svg,
+.BoardTile.richup-block-right img {
     transform: rotate(90deg)
 }
 
-.D8mtfl-S.richup-block-top {
+.BoardTile.richup-block-top {
     flex-direction: column-reverse
 }
 
-.D8mtfl-S:before {
+.BoardTile:before {
     content: "";
     position: absolute;
     top: 0;
@@ -7129,11 +7129,11 @@ body.in-an-iframe .AviLvLPG {
     opacity: 0
 }
 
-.D8mtfl-S.lGIw59Ly {
+.BoardTile.lGIw59Ly {
     cursor: pointer
 }
 
-.D8mtfl-S.lGIw59Ly:hover:before {
+.BoardTile.lGIw59Ly:hover:before {
     opacity: .05
 }
 
@@ -7201,7 +7201,7 @@ body.in-an-iframe .AviLvLPG {
     z-index: 2
 }
 
-.Itu-lOtn .CvalsVWS {
+.Itu-lOtn .TileContent {
     align-self: stretch;
     z-index: 1;
     display: flex;
@@ -7209,7 +7209,7 @@ body.in-an-iframe .AviLvLPG {
     align-items: center
 }
 
-.Itu-lOtn .CvalsVWS .mlnKELb2 {
+.Itu-lOtn .TileContent .mlnKELb2 {
     width: 2rem;
     height: 2rem;
     border-radius: 2rem;
@@ -7218,7 +7218,7 @@ body.in-an-iframe .AviLvLPG {
     margin-block-end: -1rem
 }
 
-.Itu-lOtn .CvalsVWS .LSlmqo-l {
+.Itu-lOtn .TileContent .LSlmqo-l {
     align-self: stretch;
     font-weight: 400;
     font-size: 1.125em;
@@ -7231,14 +7231,14 @@ body.in-an-iframe .AviLvLPG {
     text-shadow: 0 0 .5em #262a4c
 }
 
-.Itu-lOtn .CvalsVWS:after {
+.Itu-lOtn .TileContent:after {
     content: "";
     display: block;
     margin-block-start: -.5rem;
     margin-block-end: -.5rem
 }
 
-.LelS5mxC {
+.TileHeader {
     position: absolute;
     z-index: 0;
     top: 0;
@@ -7254,7 +7254,7 @@ body.in-an-iframe .AviLvLPG {
     pointer-events: none
 }
 
-.LelS5mxC .YqnDBpFw {
+.TileHeader .YqnDBpFw {
     position: absolute;
     top: 0;
     right: 0;
@@ -7266,7 +7266,7 @@ body.in-an-iframe .AviLvLPG {
     justify-content: center
 }
 
-.LelS5mxC .YqnDBpFw svg {
+.TileHeader .YqnDBpFw svg {
     flex-shrink: 0;
     min-block-size: 125%;
     min-inline-size: 125%
@@ -8016,12 +8016,12 @@ body.in-an-iframe .AviLvLPG {
     }
 }
 
-._1KW03nqs {
+.PropertyTile {
     align-items: center;
     justify-content: space-between
 }
 
-._1KW03nqs ._0NRL5-w0 {
+.PropertyTile .TileFooter {
     flex-grow: 1;
     inline-size: 100%;
     border-radius: inherit;
@@ -8034,7 +8034,7 @@ body.in-an-iframe .AviLvLPG {
     max-block-size: 2.25em
 }
 
-._1KW03nqs ._0NRL5-w0 .YV19OnIY {
+.PropertyTile .TileFooter .TilePrice {
     font-size: .75em;
     padding-block-start: .25rem;
     padding-block-end: .25rem;
@@ -8047,7 +8047,7 @@ body.in-an-iframe .AviLvLPG {
     margin: .25rem
 }
 
-._1KW03nqs ._0NRL5-w0 .YV19OnIY:after {
+.PropertyTile .TileFooter .TilePrice:after {
     content: "$";
     opacity: .75;
     font-weight: 400;
@@ -8258,7 +8258,7 @@ body.in-an-iframe .AviLvLPG {
     font-weight: 600
 }
 
-.LFqtGKTs {
+.BottomRow {
     align-items: center;
     justify-content: center;
     padding: .5em .25em .25em;
@@ -8267,23 +8267,23 @@ body.in-an-iframe .AviLvLPG {
     background-blend-mode: overlay
 }
 
-.LFqtGKTs ._5c4l1-iz {
+.BottomRow ._5c4l1-iz {
     width: 75%;
     max-width: 100%
 }
 
-.LFqtGKTs ._5c4l1-iz svg {
+.BottomRow ._5c4l1-iz svg {
     width: 100%;
     height: auto
 }
 
-.LFqtGKTs .gEx8GBq1 {
+.BottomRow .gEx8GBq1 {
     width: 35%;
     transform: translate(5%);
     display: flex
 }
 
-.LFqtGKTs .gEx8GBq1 svg {
+.BottomRow .gEx8GBq1 svg {
     width: 100%;
     height: auto
 }
@@ -8304,7 +8304,7 @@ body.in-an-iframe .AviLvLPG {
     opacity: .5
 }
 
-.ycM8Ol0P .u47IYqf1 {
+.CornerTile .u47IYqf1 {
     block-size: 4.25rem;
     inline-size: 4.25rem;
     display: flex;
@@ -8316,30 +8316,30 @@ body.in-an-iframe .AviLvLPG {
     user-select: none
 }
 
-.ycM8Ol0P .IEy485hJ {
+.CornerTile .CornerLabel {
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: Yanone Kaffeesatz, Segoe UI, serif
 }
 
-.ycM8Ol0P.LpdmJdoX {
+.CornerTile.LpdmJdoX {
     color: #ff95bc
 }
 
-.ycM8Ol0P.LpdmJdoX .RzmFh-Mm {
+.CornerTile.LpdmJdoX .RzmFh-Mm {
     filter: drop-shadow(0 .25em .5em rgba(255, 149, 188, .5))
 }
 
-.ycM8Ol0P.ax9vpSCk {
+.CornerTile.ax9vpSCk {
     color: #f2a841
 }
 
-.ycM8Ol0P.ax9vpSCk .RzmFh-Mm {
+.CornerTile.ax9vpSCk .RzmFh-Mm {
     filter: drop-shadow(0 .25em .5em rgba(242, 168, 65, .5))
 }
 
-.ycM8Ol0P.E27sb5mS {
+.CornerTile.E27sb5mS {
     color: #88ca8a
 }
 
@@ -8567,7 +8567,7 @@ body.in-an-iframe .AviLvLPG {
     }
 }
 
-.QvOdAhOm {
+.GameBoardLayer {
     display: grid;
     grid-template-areas: "start top prison" "left center right" "gotoprison bottom sleep";
     width: fit-content;
@@ -8575,47 +8575,47 @@ body.in-an-iframe .AviLvLPG {
     position: relative
 }
 
-.QvOdAhOm .V7PdTXXA {
+.GameBoardLayer .RowColor {
     grid-area: start;
     border-top-left-radius: .5em
 }
 
-.QvOdAhOm .wco9jMg6 {
+.GameBoardLayer .wco9jMg6 {
     grid-area: top
 }
 
-.QvOdAhOm ._4XBLxMwk {
+.GameBoardLayer ._4XBLxMwk {
     grid-area: prison;
     border-top-right-radius: .5em
 }
 
-.QvOdAhOm .mkDkjV-X {
+.GameBoardLayer .mkDkjV-X {
     grid-area: right;
     flex-direction: column;
     backface-visibility: hidden
 }
 
-.QvOdAhOm ._7MOSXxun {
+.GameBoardLayer ._7MOSXxun {
     grid-area: sleep;
     border-bottom-right-radius: .5em
 }
 
-.QvOdAhOm .yJqtQKj3 {
+.GameBoardLayer .yJqtQKj3 {
     grid-area: bottom;
     flex-direction: row-reverse
 }
 
-.QvOdAhOm .yAuBCgGb {
+.GameBoardLayer .yAuBCgGb {
     grid-area: gotoprison;
     border-bottom-left-radius: .5em
 }
 
-.QvOdAhOm .x0EASLdo {
+.GameBoardLayer .x0EASLdo {
     grid-area: left;
     flex-direction: column-reverse
 }
 
-.QvOdAhOm .Sf4SAw6a {
+.GameBoardLayer .GameBoardGrid {
     min-width: 38.25rem;
     min-height: 38.25rem;
     box-sizing: border-box;
@@ -8628,7 +8628,7 @@ body.in-an-iframe .AviLvLPG {
     box-shadow: 0 0 0 .5em #130f1d
 }
 
-.QvOdAhOm .Sf4SAw6a .g1SFEqZi {
+.GameBoardLayer .GameBoardGrid .BoardCenter {
     width: 0;
     flex-grow: 1;
     display: flex;
@@ -8637,7 +8637,7 @@ body.in-an-iframe .AviLvLPG {
     flex-direction: column
 }
 
-.QvOdAhOm .Sf4SAw6a .g1SFEqZi.oSlUiObv {
+.GameBoardLayer .GameBoardGrid .BoardCenter.BoardCenterContent {
     align-self: flex-end;
     height: 86%
 }

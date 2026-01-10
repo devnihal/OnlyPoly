@@ -28220,14 +28220,14 @@ function AK() {
 }
 var PK = AK();
 const MK = hr(PK),
-    RK = "z8cEagq4",
-    NK = "L-OjmNx-",
-    IK = "k2l1CwEs",
-    LK = "y8Q-UqoT",
-    jK = "BGpK5gvF",
+    RK = "DiceContainer",
+    NK = "DiceInstance",
+    IK = "DiceRoot",
+    LK = "DiceFace",
+    jK = "DiceDot",
     DK = "_3fDJUgYo",
     FK = "d4NdLJuk",
-    BK = "Zbc4gzb-",
+    BK = "DiceCube",
     zK = "Ecp7qJ-I",
     VK = "RciwbKqU",
     HK = "UJiU71gT",
@@ -33196,7 +33196,7 @@ const vR = ({
     }, Symbol.toStringTag, {
         value: "Module"
     })),
-    KX = "GPMPBa6i",
+    KX = "PlayerToken",
     QX = "_1D0JBEDw",
     XX = "_3UyME1zx",
     JX = "uagBqIT2",
@@ -58412,7 +58412,7 @@ const pj = {
     addLog: () => null
 },
     gu = _.createContext(pj),
-    B4e = "D8mtfl-S",
+    B4e = "BoardTile",
     z4e = "lGIw59Ly",
     WO = {
         block: B4e,
@@ -58837,10 +58837,10 @@ const C3e = t => ({
 var T3e = (t => (t[t.CONNECTED = 0] = "CONNECTED", t[t.DISCONNECTED = 1] = "DISCONNECTED", t))(T3e || {});
 const zo = C3e(gj),
     k3e = "Itu-lOtn",
-    O3e = "CvalsVWS",
+    O3e = "TileContent",
     A3e = "mlnKELb2",
     P3e = "LSlmqo-l",
-    M3e = "LelS5mxC",
+    M3e = "TileHeader",
     R3e = "YqnDBpFw",
     N3e = "tWR-ZGkg",
     I3e = "PuSPraNU",
@@ -60117,9 +60117,9 @@ function Tge() {
 const kge = {
     "santa-claus": h.jsx(Tge, {})
 },
-    Oge = "_1KW03nqs",
-    Age = "_0NRL5-w0",
-    Pge = "YV19OnIY",
+    Oge = "PropertyTile",
+    Age = "TileFooter",
+    Pge = "TilePrice",
     Mge = "cprZ5bW8",
     Rge = "_7SToyVQa",
     Nge = "ai0ojLXA",
@@ -60518,7 +60518,7 @@ const Mj = ({
     s5e = "Uk3QmDaA",
     o5e = "USMEnz5j",
     l5e = "qXh-ihY3",
-    c5e = "LFqtGKTs",
+    c5e = "BottomRow",
     u5e = "_5c4l1-iz",
     f5e = "gEx8GBq1",
     d5e = "_1Mi4x4tQ",
@@ -60658,9 +60658,9 @@ function y5e({
         })]
     })
 }
-const w5e = "ycM8Ol0P",
+const w5e = "CornerTile",
     b5e = "u47IYqf1",
-    _5e = "IEy485hJ",
+    _5e = "CornerLabel",
     x5e = "LpdmJdoX",
     C5e = "RzmFh-Mm",
     S5e = "ax9vpSCk",
@@ -60827,8 +60827,8 @@ function q7({
         children: [cM[Wc[t].method], Wc[t].amount]
     })
 }
-const j5e = "QvOdAhOm",
-    D5e = "V7PdTXXA",
+const j5e = "GameBoardLayer",
+    D5e = "RowColor",
     F5e = "wco9jMg6",
     B5e = "_4XBLxMwk",
     z5e = "mkDkjV-X",
@@ -60836,9 +60836,9 @@ const j5e = "QvOdAhOm",
     H5e = "yJqtQKj3",
     $5e = "yAuBCgGb",
     U5e = "x0EASLdo",
-    q5e = "Sf4SAw6a",
-    W5e = "g1SFEqZi",
-    G5e = "oSlUiObv",
+    q5e = "GameBoardGrid",
+    W5e = "BoardCenter",
+    G5e = "BoardCenterContent",
     Z5e = "VLpxC353",
     Y5e = "_-0HXLjav",
     Yi = {

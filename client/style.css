@@ -64,21 +64,23 @@ h4,
 /* --- 3D DICE STYLES (CENTERED) --- */
 
 /* No longer an overlay, but a container in the center */
+/* Dice Visibility - Persistent */
 .dice-center-area {
   position: absolute;
   top: 55%;
-  /* Slightly below center logo */
   left: 50%;
   transform: translate(-50%, -50%);
-  /* Start centered */
   z-index: 50;
-  /* Above branding */
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  /* Let clicks pass through if needed, though buttons are elsewhere */
-  opacity: 0;
+  opacity: 1;
+  /* Always visible as requested */
   transition: opacity 0.5s;
+  /* Ensure it doesn't block interaction with board center controls if any */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dice-center-area.visible {
@@ -91,130 +93,248 @@ h4,
   perspective: 800px;
 }
 
-/* Scene for a single die */
 .richup-dice {
-  width: var(--dice-size);
-  height: var(--dice-size);
+  /* Wrapper for the new DiceContainer */
   position: relative;
-  /* perspective is on overlay/container to allow shared space, but individual works too */
+  /* Size is handled by inner DiceContainer but we can ensure flow */
 }
 
-/* The 3D Cube */
-.richup-cube {
-  width: 100%;
-  height: 100%;
+/* --- RICHUP 3D DICE STYLES --- */
+
+/* Container for the Die (Animation wrapper) */
+.DiceContainer {
+  perspective: 1000px;
+  position: relative;
+  transition: transform .5s cubic-bezier(.75, 0, .5, 1);
+  padding: 1.5rem 1.25rem;
+  width: 8rem;
+  /* Ensure space */
+  height: 8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* "Thrown" state - moves up */
+.DiceContainer.DiceInstance {
+  transform: translateY(-5rem);
+  transition-timing-function: cubic-bezier(0, 0, 0, 1)
+}
+
+/* Shadow */
+.DiceContainer:before {
+  content: "";
+  position: absolute;
+  bottom: 1rem;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  width: 5rem;
+  height: 25%;
+  border-radius: 100%;
+  background: #fff;
+  transition: inherit;
+  transition-property: transform, opacity;
+  transform-origin: center;
+  pointer-events: none;
+  opacity: .3
+}
+
+/* Shadow when thrown (smaller, fainter) */
+.DiceInstance.DiceContainer:before {
+  transform: translateY(5rem) scale(.75);
+  opacity: .075
+}
+
+.DiceRoot {
+  transform-style: preserve-3d;
+  transform: rotateX(35deg) rotate(45deg);
+  /* Default isometric view */
+}
+
+.DiceCube {
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  transform-style: preserve-3d;
+  transition: transform 1s cubic-bezier(0, 0, 0, 1);
+}
+
+.DiceFace {
+  background: #fff;
+  box-shadow: inset 0 0 1em .25em #d9d9d9;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 1.5rem;
+  display: grid;
+  color: #000;
   position: absolute;
   transform-style: preserve-3d;
-  transition: transform 1s cubic-bezier(0.25, 0.1, 0.25, 1);
-  will-change: transform;
-}
-
-.richup-cube.rolling {
-  animation: cube-spin 0.2s infinite linear;
-}
-
-@keyframes cube-spin {
-  0% {
-    transform: rotateX(0) rotateY(0) rotateZ(0);
-  }
-
-  100% {
-    transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
-  }
-}
-
-/* Cube Faces */
-.cube-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: #fdfdfd;
-  border-radius: 12%;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1), 0 0 2px rgba(0, 0, 0, 0.2);
-  /* Richup has slightly shiny/clean white dice */
-  display: flex;
+  grid-template-areas: "one two three" "four five six" "seven eight nine";
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   align-items: center;
-  justify-content: center;
+  justify-items: center;
+  padding: 15%;
+  box-sizing: border-box;
+  z-index: 1;
   backface-visibility: hidden;
-  border: 1px solid #d0d0d0;
-}
-
-/* Faces Transforms */
-.face-1 {
-  transform: rotateY(0deg) translateZ(calc(var(--dice-size)/2));
-}
-
-.face-6 {
-  transform: rotateY(180deg) translateZ(calc(var(--dice-size)/2));
-}
-
-.face-2 {
-  transform: rotateY(-90deg) translateZ(calc(var(--dice-size)/2));
-}
-
-.face-5 {
-  transform: rotateY(90deg) translateZ(calc(var(--dice-size)/2));
-}
-
-.face-3 {
-  transform: rotateX(-90deg) translateZ(calc(var(--dice-size)/2));
-}
-
-.face-4 {
-  transform: rotateX(90deg) translateZ(calc(var(--dice-size)/2));
 }
 
 /* Dots */
-.dice-dot {
-  width: var(--dot-size);
-  height: var(--dot-size);
-  background: #2b2341;
+.DiceFace .DiceDot {
+  width: 0.75rem;
+  height: 0.75rem;
   border-radius: 50%;
+  background-color: #2b2341;
+  /* Dark branding color */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Inner filler background for back of face? */
+.DiceFace:after {
+  content: "";
   position: absolute;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #d9d9d9;
+  border-radius: inherit;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
 }
 
-/* Dot Positions */
-.dot-center {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+/* Positioning Faces */
+.DiceFace[data-side="6"] {
+  transform: translateZ(2.5rem);
 }
 
-.dot-tl {
-  top: 20%;
-  left: 20%;
-  transform: translate(-50%, -50%);
+.DiceFace[data-side="1"] {
+  transform: rotateX(-180deg) translateZ(2.5rem);
 }
 
-.dot-tr {
-  top: 20%;
-  right: 20%;
-  transform: translate(50%, -50%);
+.DiceFace[data-side="2"] {
+  transform: rotateX(90deg) translateZ(2.5rem);
 }
 
-.dot-bl {
-  bottom: 20%;
-  left: 20%;
-  transform: translate(-50%, 50%);
+.DiceFace[data-side="5"] {
+  transform: rotateX(-90deg) translateZ(2.5rem);
 }
 
-.dot-br {
-  bottom: 20%;
-  right: 20%;
-  transform: translate(50%, 50%);
+.DiceFace[data-side="3"] {
+  transform: rotateY(90deg) translateZ(2.5rem);
 }
 
-.dot-ml {
-  top: 50%;
-  left: 20%;
-  transform: translate(-50%, -50%);
+.DiceFace[data-side="4"] {
+  transform: rotateY(-90deg) translateZ(2.5rem);
 }
 
-.dot-mr {
-  top: 50%;
-  right: 20%;
-  transform: translate(50%, -50%);
+/* Dot Grid Positioning */
+.DiceFace[data-side="1"] .DiceDot:nth-child(1) {
+  grid-area: five;
+}
+
+.DiceFace[data-side="2"] .DiceDot:nth-child(1) {
+  grid-area: one;
+}
+
+.DiceFace[data-side="2"] .DiceDot:nth-child(2) {
+  grid-area: nine;
+}
+
+.DiceFace[data-side="3"] .DiceDot:nth-child(1) {
+  grid-area: one;
+}
+
+.DiceFace[data-side="3"] .DiceDot:nth-child(2) {
+  grid-area: five;
+}
+
+.DiceFace[data-side="3"] .DiceDot:nth-child(3) {
+  grid-area: nine;
+}
+
+.DiceFace[data-side="4"] .DiceDot:nth-child(1) {
+  grid-area: one;
+}
+
+.DiceFace[data-side="4"] .DiceDot:nth-child(2) {
+  grid-area: three;
+}
+
+.DiceFace[data-side="4"] .DiceDot:nth-child(3) {
+  grid-area: seven;
+}
+
+.DiceFace[data-side="4"] .DiceDot:nth-child(4) {
+  grid-area: nine;
+}
+
+.DiceFace[data-side="5"] .DiceDot:nth-child(1) {
+  grid-area: one;
+}
+
+.DiceFace[data-side="5"] .DiceDot:nth-child(2) {
+  grid-area: three;
+}
+
+.DiceFace[data-side="5"] .DiceDot:nth-child(3) {
+  grid-area: five;
+}
+
+.DiceFace[data-side="5"] .DiceDot:nth-child(4) {
+  grid-area: seven;
+}
+
+.DiceFace[data-side="5"] .DiceDot:nth-child(5) {
+  grid-area: nine;
+}
+
+.DiceFace[data-side="6"] .DiceDot:nth-child(1) {
+  grid-area: one;
+}
+
+.DiceFace[data-side="6"] .DiceDot:nth-child(2) {
+  grid-area: three;
+}
+
+.DiceFace[data-side="6"] .DiceDot:nth-child(3) {
+  grid-area: four;
+}
+
+.DiceFace[data-side="6"] .DiceDot:nth-child(4) {
+  grid-area: six;
+}
+
+.DiceFace[data-side="6"] .DiceDot:nth-child(5) {
+  grid-area: seven;
+}
+
+.DiceFace[data-side="6"] .DiceDot:nth-child(6) {
+  grid-area: nine;
+}
+
+/* Internal Cross Planes (Structure) - optional but keeps looks solid */
+.InnerPlane {
+  border-radius: 0;
+  background: #d9d9d9;
+  position: absolute;
+  width: 5rem;
+  height: 5rem;
+}
+
+.InnerPlane.x-axis {
+  transform: rotateX(90deg);
+}
+
+.InnerPlane.y-axis {
+  transform: rotateY(90deg);
+}
+
+.InnerPlane.z-axis {
+  transform: rotate(90deg);
 }
 
 
@@ -234,19 +354,21 @@ h4,
   display: grid;
   grid-template-columns: repeat(11, 1fr);
   grid-template-rows: repeat(11, 1fr);
-  gap: 3px;
-  /* Distinct gap */
-  width: 95vh;
-  height: 95vh;
-  max-width: 850px;
-  max-height: 850px;
-  background: #1a1626;
-  /* Dark background between tiles */
-  padding: 5px;
-  border-radius: 20px;
-  /* Stronger radius */
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  gap: 4px;
+  /* Slightly larger gap for specific look */
+  /* Responsive Square Board */
+  width: min(95vw, 95vh, 850px);
+  height: min(95vw, 95vh, 850px);
+
+  background: #130f1d;
+  /* Richup board bg color */
+  padding: 6px;
+  border-radius: 8px;
+  /* Sharper radius */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 0.5em #130f1d;
   position: relative;
+  /* Prevent font scaling issues */
+  font-size: min(1.5vh, 1.5vw);
 }
 
 .board-center {
@@ -274,29 +396,28 @@ h4,
 }
 
 /* Richup Tile Style */
+/* Richup Tile Style (Dark Mode) */
 .tile {
-  background: #E8E8E8;
-  /* Default richup light tile color */
-  color: #333;
-  /* Dark text on light tile */
-  border-radius: 4px;
+  background-color: #262a4c;
+  background-image: linear-gradient(to bottom right, #262a4c, #2f264c);
+  color: #fff;
+  border-radius: 0.5em;
+  /* Match BoardTile border-radius */
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding: 0;
-  /* Important for color bar usage */
   transition: transform 0.2s, z-index 0s 0.2s;
   overflow: hidden;
-  /* For color bar radius */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .tile:hover {
   transform: scale(1.15);
   z-index: 100;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   transition: transform 0.2s, z-index 0s;
 }
 
@@ -309,8 +430,11 @@ h4,
 }
 
 /* Handling Special Corners */
+/* Handling Special Corners */
 .tile[data-type="corner"] {
-  background: #E8E8E8;
+  background-color: #262a4c;
+  /* Keep uniform dark */
+  background-image: linear-gradient(to bottom right, #262a4c, #2f264c);
   justify-content: center;
   padding: 5px;
 }
@@ -323,8 +447,9 @@ h4,
 .tile-name {
   font-size: 0.6em;
   text-align: center;
-  color: #333;
-  font-weight: 700;
+  color: #fff;
+  /* White text for dark tiles */
+  font-weight: 400;
   margin-top: 4px;
   line-height: 1.1;
   padding: 0 2px;
@@ -336,9 +461,10 @@ h4,
 
 .tile-price {
   font-size: 0.65em;
-  color: #666;
+  color: rgba(255, 255, 255, 0.6);
+  /* Muted white */
   margin-bottom: 3px;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 /* Icon / Graphic placeholders for Railroads/Utils */

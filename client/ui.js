@@ -56,6 +56,9 @@ window.OnlypolyUI = (function () {
       name.className = 'tile-name';
       // Shorten standard names for cleaner look
       name.textContent = tile.name.replace('Place', 'Pl').replace('Avenue', 'Ave');
+      name.style.fontFamily = '"Yanone Kaffeesatz", sans-serif';
+      name.style.fontWeight = '400';
+      name.style.letterSpacing = '0.05em';
       div.appendChild(name);
 
       // Icons
