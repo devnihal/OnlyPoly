@@ -68,6 +68,13 @@
             <button id="auctionBtn" class="btn-richup secondary" style="flex: 1;">Auction</button>
             <button id="payJailBtn" class="btn-richup secondary" style="flex: 1;">Pay Jail</button>
           </div>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button id="propertiesBtn" class="btn-richup secondary" style="flex: 1;">Properties</button>
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button id="bankruptBtn" class="btn-richup secondary"
+              style="flex: 1; background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c;">Bankrupt</button>
+          </div>
 
           <button id="endTurnBtn" class="btn-richup secondary" style="margin-top: 10px;" disabled>End Turn</button>
         </div>
@@ -114,6 +121,38 @@
         <div id="tradeContent" class="trade-content"></div>
         <button onclick="document.getElementById('tradeModal').classList.remove('visible')" class="btn-richup secondary"
           style="margin-top: 20px;">Close</button>
+      </div>
+    </div>
+
+    <!-- Properties Modal -->
+    <div id="propertiesModal" class="modal-overlay">
+      <div class="modal-content" style="width: 600px; max-width: 90%;">
+        <h2 class="font-richup">My Properties</h2>
+        <div id="propertiesContent" class="properties-content"></div>
+        <button onclick="document.getElementById('propertiesModal').classList.remove('visible')"
+          class="btn-richup secondary" style="margin-top: 20px;">Close</button>
+      </div>
+    </div>
+
+    <!-- Bankruptcy Confirmation Modal -->
+    <div id="bankruptModal" class="modal-overlay">
+      <div class="modal-content" style="width: 500px; max-width: 90%;">
+        <h2 class="font-richup" style="color: #e74c3c;">⚠️ Declare Bankruptcy</h2>
+        <div style="padding: 20px 0; line-height: 1.6;">
+          <p style="margin-bottom: 15px; font-size: 1.1em;">Are you sure you want to declare bankruptcy?</p>
+          <p style="color: #888; margin-bottom: 10px;">This action cannot be undone. You will:</p>
+          <ul style="text-align: left; color: #aaa; margin: 10px 0; padding-left: 30px;">
+            <li>Lose all your money</li>
+            <li>Lose all your properties</li>
+            <li>Be removed from the game</li>
+          </ul>
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <button id="confirmBankruptBtn" class="btn-richup"
+            style="background: linear-gradient(to top left, #e74c3c, #c0392b); flex: 1;">Yes, Bankrupt Me</button>
+          <button onclick="document.getElementById('bankruptModal').classList.remove('visible')"
+            class="btn-richup secondary" style="flex: 1;">Cancel</button>
+        </div>
       </div>
     </div>
 

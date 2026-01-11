@@ -148,6 +148,14 @@ io.on('connection', async (socket) => {
   socket.on('roll_dice', () => {
     if (!ensureReady(socket)) return;
     if (!playerId || !gameState.assertTurn(playerId)) return;
+
+    // Prevent bankrupt players from rolling
+    const player = gameState.players[playerId];
+    if (player && player.bankrupt) {
+      socket.emit('action_rejected', { reason: 'player_bankrupt' });
+      return;
+    }
+
     if (gameState.hasRolledThisTurn) {
       socket.emit('action_rejected', { reason: 'already_rolled' });
       return;
@@ -322,6 +330,14 @@ io.on('connection', async (socket) => {
   socket.on('propose_trade', (payload) => {
     if (!ensureReady(socket)) return;
     if (!playerId) return;
+
+    // Prevent bankrupt players from trading
+    const player = gameState.players[playerId];
+    if (player && player.bankrupt) {
+      socket.emit('action_rejected', { reason: 'player_bankrupt' });
+      return;
+    }
+
     tradeSystem.createTrade(playerId, payload.toPlayerId, payload);
   });
 
@@ -336,6 +352,44 @@ io.on('connection', async (socket) => {
     if (!ensureReady(socket)) return;
     if (!playerId) return;
     tradeSystem.rejectTrade(tradeId, playerId);
+  });
+
+  socket.on('declare_bankruptcy', () => {
+    if (!ensureReady(socket)) return;
+    if (!playerId) return;
+
+    const player = gameState.players[playerId];
+    if (!player) return;
+
+    console.log(`Player ${player.name} (${playerId}) declared bankruptcy`);
+
+    // Free all properties
+    Object.keys(player.ownedProperties || {}).forEach(propId => {
+      delete player.ownedProperties[propId];
+    });
+
+    // Set money to 0
+    player.money = 0;
+
+    // Mark as bankrupt
+    player.bankrupt = true;
+
+    // Remove from turn order
+    gameState.turnOrder = gameState.turnOrder.filter(id => id !== playerId);
+
+    // If it was their turn, advance to next player
+    if (gameState.currentPlayerId === playerId) {
+      if (gameState.turnOrder.length > 0) {
+        gameState.currentTurnIndex = gameState.currentTurnIndex % gameState.turnOrder.length;
+      }
+    }
+
+    // Persist state
+    gameState.persist();
+
+    // Notify all players
+    io.emit('player_bankrupt', { playerId, playerName: player.name });
+    io.emit('state_update', gameState.serialize());
   });
 
   socket.on('disconnect', () => {

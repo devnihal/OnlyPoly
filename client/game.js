@@ -45,10 +45,17 @@
   const dice1 = document.getElementById('dice1');
   const dice2 = document.getElementById('dice2');
 
+  const propertiesBtn = document.getElementById('propertiesBtn');
+  const propertiesModal = document.getElementById('propertiesModal');
+  const propertiesContent = document.getElementById('propertiesContent');
+
+  const bankruptBtn = document.getElementById('bankruptBtn');
+  const bankruptModal = document.getElementById('bankruptModal');
+  const confirmBankruptBtn = document.getElementById('confirmBankruptBtn');
+
   const menuToggle = document.getElementById('menuToggle');
   const secondaryMenu = document.getElementById('secondaryMenu');
   const closeSecondaryMenu = document.getElementById('closeSecondaryMenu');
-  const propertiesBtn = document.getElementById('propertiesBtn');
   const playersBtn = document.getElementById('playersBtn');
   const propertiesCount = document.getElementById('propertiesCount');
   const propertiesPanel = document.getElementById('propertiesPanel');
@@ -200,9 +207,23 @@
   });
 
   propertiesBtn?.addEventListener('click', () => {
-    secondaryMenu.classList.add('hidden');
-    propertiesPanel.classList.remove('hidden');
-    renderPropertiesPanel();
+    openPropertiesModal();
+  });
+
+  bankruptBtn?.addEventListener('click', () => {
+    bankruptModal.classList.add('visible');
+  });
+
+  confirmBankruptBtn?.addEventListener('click', () => {
+    socket.emit('declare_bankruptcy');
+    bankruptModal.classList.remove('visible');
+    OnlypolyUI.toast('Bankruptcy declared. You have been removed from the game.', 'error');
+  });
+
+  bankruptModal?.addEventListener('click', (e) => {
+    if (e.target === bankruptModal || e.target.classList.contains('modal-backdrop')) {
+      bankruptModal.classList.remove('visible');
+    }
   });
 
   closeProperties?.addEventListener('click', () => {
@@ -416,6 +437,27 @@
 
     const myPlayer = state.players[me.id];
     const current = state.players[state.currentPlayerId];
+
+    // Check if player is bankrupt
+    if (myPlayer && myPlayer.bankrupt) {
+      // Disable ALL controls for bankrupt players
+      rollBtn.disabled = true;
+      rollBtn.textContent = 'Bankrupt';
+      endTurnBtn.disabled = true;
+      buyBtn.disabled = true;
+      auctionBtn.disabled = true;
+      payJailBtn.disabled = true;
+      tradeBtn.disabled = true;
+      propertiesBtn.disabled = true;
+      bankruptBtn.disabled = true;
+
+      turnLabel.textContent = 'Game Over - You are Bankrupt';
+      moneyDisplay.textContent = '$0';
+      positionDisplay.textContent = 'Eliminated';
+
+      return; // Exit early, don't process any other game logic
+    }
+
     if (current) {
       turnLabel.textContent =
         current.id === me.id ? 'Your turn' : `${current.name}'s turn`;
@@ -458,6 +500,8 @@
     auctionBtn.disabled = !canBuyOrAuction;
     payJailBtn.disabled = !isMyTurn || !myPlayer?.inJail;
     tradeBtn.disabled = false;
+    propertiesBtn.disabled = false;
+    bankruptBtn.disabled = false;
 
     const ownedProperties = Object.keys(myPlayer?.ownedProperties || {}).length;
     if (propertiesCount) {
@@ -495,6 +539,12 @@
     const myPlayer = state.players[me.id];
     if (!myPlayer) return;
 
+    // Prevent bankrupt players from trading
+    if (myPlayer.bankrupt) {
+      OnlypolyUI.toast('You cannot trade - you are bankrupt.', 'error');
+      return;
+    }
+
     const others = Object.values(state.players).filter(
       (p) => p.id !== me.id && !p.bankrupt
     );
@@ -503,7 +553,77 @@
       return;
     }
 
-    let partnerId = others[0].id;
+    // Step 1: Show player selection menu
+    tradeModal.classList.add('visible');
+    tradeContent.innerHTML = '';
+
+    const root = document.createElement('div');
+    root.className = 'trade-player-selection';
+
+    const header = document.createElement('div');
+    header.className = 'trade-header';
+
+    const title = document.createElement('div');
+    title.className = 'trade-title';
+    title.textContent = 'Select Player to Trade With';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'btn ghost small';
+    closeBtn.textContent = 'Close';
+    closeBtn.onclick = closeTradeModal;
+
+    header.appendChild(title);
+    header.appendChild(closeBtn);
+    root.appendChild(header);
+
+    const playerList = document.createElement('div');
+    playerList.className = 'trade-player-list';
+
+    others.forEach((player) => {
+      const card = document.createElement('div');
+      card.className = 'trade-player-card';
+      card.style.borderLeft = `4px solid ${player.color || '#888'}`;
+
+      const info = document.createElement('div');
+      info.className = 'trade-player-info';
+
+      const name = document.createElement('div');
+      name.className = 'trade-player-name';
+      name.textContent = player.name;
+      name.style.color = player.color || '#fff';
+
+      const money = document.createElement('div');
+      money.className = 'trade-player-money';
+      money.textContent = `$${player.money}`;
+
+      const props = Object.keys(player.ownedProperties || {}).length;
+      const propsCount = document.createElement('div');
+      propsCount.className = 'trade-player-props';
+      propsCount.textContent = `${props} ${props === 1 ? 'property' : 'properties'}`;
+
+      info.appendChild(name);
+      info.appendChild(money);
+      info.appendChild(propsCount);
+
+      card.appendChild(info);
+
+      card.onclick = () => {
+        // Step 2: Show trade composer with selected player
+        showTradeComposer(player.id);
+      };
+
+      playerList.appendChild(card);
+    });
+
+    root.appendChild(playerList);
+    tradeContent.appendChild(root);
+  }
+
+  function showTradeComposer(partnerId) {
+    const myPlayer = state.players[me.id];
+    const partner = state.players[partnerId];
+    if (!myPlayer || !partner) return;
+
     let moneyDelta = 0; // + => you give money, - => you take money
     const offerProps = new Set();
     const requestProps = new Set();
@@ -524,20 +644,15 @@
     }
 
     function computeLimits() {
-      const partner = state.players[partnerId];
       const maxGive = Math.max(0, Math.floor(myPlayer.money || 0));
       const maxTake = Math.max(0, Math.floor(partner?.money || 0));
       return { maxGive, maxTake };
     }
 
     function renderTradeComposer() {
-      const partner = state.players[partnerId];
-      if (!partner) return;
-
       const { maxGive, maxTake } = computeLimits();
       moneyDelta = Math.max(-maxTake, Math.min(maxGive, moneyDelta));
 
-      tradeModal.classList.remove('hidden');
       tradeContent.innerHTML = '';
 
       const root = document.createElement('div');
@@ -546,46 +661,24 @@
       const header = document.createElement('div');
       header.className = 'trade-header';
 
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn ghost small';
+      backBtn.textContent = '← Back';
+      backBtn.onclick = openTradeComposer;
+
       const title = document.createElement('div');
       title.className = 'trade-title';
-      title.textContent = 'Compose Trade';
+      title.textContent = `Trade with ${partner.name}`;
 
       const closeBtn = document.createElement('button');
       closeBtn.className = 'btn ghost small';
       closeBtn.textContent = 'Close';
       closeBtn.onclick = closeTradeModal;
 
+      header.appendChild(backBtn);
       header.appendChild(title);
       header.appendChild(closeBtn);
       root.appendChild(header);
-
-      const partnerRow = document.createElement('div');
-      partnerRow.className = 'trade-partner-row';
-
-      const partnerLabel = document.createElement('div');
-      partnerLabel.className = 'trade-muted';
-      partnerLabel.textContent = 'Trading with';
-
-      const select = document.createElement('select');
-      select.className = 'trade-select';
-      others.forEach((p) => {
-        const opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = `${p.name} ($${p.money})`;
-        select.appendChild(opt);
-      });
-      select.value = partnerId;
-      select.onchange = () => {
-        partnerId = select.value;
-        offerProps.clear();
-        requestProps.clear();
-        moneyDelta = 0;
-        renderTradeComposer();
-      };
-
-      partnerRow.appendChild(partnerLabel);
-      partnerRow.appendChild(select);
-      root.appendChild(partnerRow);
 
       const moneyBox = document.createElement('div');
       moneyBox.className = 'trade-money-box';
@@ -707,6 +800,7 @@
           requestProperties: Array.from(requestProps),
         });
         closeTradeModal();
+        OnlypolyUI.toast('Trade offer sent!');
       };
 
       const cancel = document.createElement('button');
@@ -724,10 +818,10 @@
   }
 
   function openTradeReview(trade) {
-    tradeModal.classList.remove('hidden');
+    tradeModal.classList.add('visible');
     tradeContent.innerHTML = '';
     const from = state.players[trade.from];
-    // const to = state.players[trade.to];
+    const to = state.players[trade.to];
 
     function tileName(pid) {
       const t = (state.board || []).find((x) => x.id === Number(pid));
@@ -755,23 +849,38 @@
 
     details.appendChild(moneyLine);
     details.appendChild(propsLine);
+
     const accept = document.createElement('button');
     accept.className = 'btn primary small';
     accept.textContent = 'Accept';
     accept.onclick = () => {
       socket.emit('accept_trade', { tradeId: trade.id });
       closeTradeModal();
+      OnlypolyUI.toast('Trade accepted!');
     };
+
+    const negotiate = document.createElement('button');
+    negotiate.className = 'btn secondary small';
+    negotiate.textContent = 'Negotiate';
+    negotiate.onclick = () => {
+      // Open trade composer with pre-filled values from original offer
+      // But swap the perspective (what they offered becomes what we request, etc.)
+      openNegotiateComposer(trade);
+    };
+
     const reject = document.createElement('button');
     reject.className = 'btn ghost small';
     reject.textContent = 'Reject';
     reject.onclick = () => {
       socket.emit('reject_trade', { tradeId: trade.id });
       closeTradeModal();
+      OnlypolyUI.toast('Trade rejected');
     };
+
     const actions = document.createElement('div');
     actions.className = 'trade-actions';
     actions.appendChild(reject);
+    actions.appendChild(negotiate);
     actions.appendChild(accept);
 
     tradeContent.appendChild(p);
@@ -779,13 +888,299 @@
     tradeContent.appendChild(actions);
   }
 
+  function openNegotiateComposer(originalTrade) {
+    const myPlayer = state.players[me.id];
+    const partner = state.players[originalTrade.from]; // Original sender
+    if (!myPlayer || !partner) return;
+
+    // Swap the perspective: what they offered to give us, we now request from them
+    // What they requested from us, we now offer to them
+    let moneyDelta = (originalTrade.requestMoney || 0) - (originalTrade.offerMoney || 0);
+    const offerProps = new Set(originalTrade.requestProperties || []);
+    const requestProps = new Set(originalTrade.offerProperties || []);
+
+    function getTileById(id) {
+      return (state.board || []).find((t) => t.id === Number(id)) || null;
+    }
+
+    function getOwnedTileIds(player) {
+      return Object.keys(player?.ownedProperties || {}).map((x) => Number(x)).filter((n) => Number.isFinite(n));
+    }
+
+    function formatMoneyLine(delta) {
+      const d = Number(delta) || 0;
+      if (d > 0) return `You give $${d}`;
+      if (d < 0) return `You take $${Math.abs(d)}`;
+      return 'No money exchanged';
+    }
+
+    function computeLimits() {
+      const maxGive = Math.max(0, Math.floor(myPlayer.money || 0));
+      const maxTake = Math.max(0, Math.floor(partner?.money || 0));
+      return { maxGive, maxTake };
+    }
+
+    function renderNegotiateComposer() {
+      const { maxGive, maxTake } = computeLimits();
+      moneyDelta = Math.max(-maxTake, Math.min(maxGive, moneyDelta));
+
+      tradeContent.innerHTML = '';
+
+      const root = document.createElement('div');
+      root.className = 'trade-composer';
+
+      const header = document.createElement('div');
+      header.className = 'trade-header';
+
+      const backBtn = document.createElement('button');
+      backBtn.className = 'btn ghost small';
+      backBtn.textContent = '← Back';
+      backBtn.onclick = () => openTradeReview(originalTrade);
+
+      const title = document.createElement('div');
+      title.className = 'trade-title';
+      title.textContent = `Counter Offer to ${partner.name}`;
+
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'btn ghost small';
+      closeBtn.textContent = 'Close';
+      closeBtn.onclick = closeTradeModal;
+
+      header.appendChild(backBtn);
+      header.appendChild(title);
+      header.appendChild(closeBtn);
+      root.appendChild(header);
+
+      const moneyBox = document.createElement('div');
+      moneyBox.className = 'trade-money-box';
+
+      const moneyLine = document.createElement('div');
+      moneyLine.className = 'trade-money-line';
+      moneyLine.textContent = formatMoneyLine(moneyDelta);
+
+      const slider = document.createElement('input');
+      slider.type = 'range';
+      slider.className = 'trade-slider';
+      slider.min = String(-maxTake);
+      slider.max = String(maxGive);
+      slider.step = '10';
+      slider.value = String(moneyDelta);
+      slider.oninput = () => {
+        moneyDelta = Number(slider.value) || 0;
+        moneyLine.textContent = formatMoneyLine(moneyDelta);
+      };
+
+      const moneyCaps = document.createElement('div');
+      moneyCaps.className = 'trade-money-caps';
+      moneyCaps.textContent = `Take up to $${maxTake} • Give up to $${maxGive}`;
+
+      moneyBox.appendChild(moneyLine);
+      moneyBox.appendChild(slider);
+      moneyBox.appendChild(moneyCaps);
+      root.appendChild(moneyBox);
+
+      const split = document.createElement('div');
+      split.className = 'trade-split';
+
+      function renderSide(sideEl, whoLabel, whoMoney, tileIds, setRef, color) {
+        sideEl.innerHTML = '';
+        const h = document.createElement('div');
+        h.className = 'trade-side-header';
+        h.style.setProperty('--trade-accent', color);
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'trade-side-name';
+        nameEl.textContent = whoLabel;
+        const moneyEl = document.createElement('div');
+        moneyEl.className = 'trade-side-money';
+        moneyEl.textContent = `$${whoMoney}`;
+        h.appendChild(nameEl);
+        h.appendChild(moneyEl);
+        sideEl.appendChild(h);
+
+        const list = document.createElement('div');
+        list.className = 'trade-props';
+
+        if (!tileIds.length) {
+          const empty = document.createElement('div');
+          empty.className = 'trade-muted';
+          empty.textContent = 'No properties';
+          list.appendChild(empty);
+        } else {
+          tileIds
+            .slice()
+            .sort((a, b) => a - b)
+            .forEach((pid) => {
+              const tile = getTileById(pid);
+              const row = document.createElement('label');
+              row.className = 'trade-prop-row';
+
+              const cb = document.createElement('input');
+              cb.type = 'checkbox';
+              cb.checked = setRef.has(pid);
+              cb.onchange = () => {
+                if (cb.checked) setRef.add(pid);
+                else setRef.delete(pid);
+              };
+
+              const meta = document.createElement('div');
+              meta.className = 'trade-prop-meta';
+              const n = document.createElement('div');
+              n.className = 'trade-prop-name';
+              n.textContent = tile ? tile.name : `Tile ${pid}`;
+              const sub = document.createElement('div');
+              sub.className = 'trade-prop-sub';
+              sub.textContent = tile?.country || tile?.type || '';
+              meta.appendChild(n);
+              meta.appendChild(sub);
+
+              row.appendChild(cb);
+              row.appendChild(meta);
+              list.appendChild(row);
+            });
+        }
+
+        sideEl.appendChild(list);
+      }
+
+      const left = document.createElement('div');
+      left.className = 'trade-side';
+      const right = document.createElement('div');
+      right.className = 'trade-side';
+
+      renderSide(left, `${myPlayer.name} (you)`, myPlayer.money, getOwnedTileIds(myPlayer), offerProps, myPlayer.color || '#00d2ff');
+      renderSide(right, partner.name, partner.money, getOwnedTileIds(partner), requestProps, partner.color || '#ff4b81');
+
+      split.appendChild(left);
+      split.appendChild(right);
+      root.appendChild(split);
+
+      const actions = document.createElement('div');
+      actions.className = 'trade-actions';
+
+      const send = document.createElement('button');
+      send.className = 'btn primary';
+      send.textContent = 'Send Counter Offer';
+      send.onclick = () => {
+        // First reject the original trade
+        socket.emit('reject_trade', { tradeId: originalTrade.id });
+
+        // Then send new counter offer
+        const offerMoney = moneyDelta > 0 ? moneyDelta : 0;
+        const requestMoney = moneyDelta < 0 ? Math.abs(moneyDelta) : 0;
+        socket.emit('propose_trade', {
+          toPlayerId: partner.id,
+          offerMoney,
+          requestMoney,
+          offerProperties: Array.from(offerProps),
+          requestProperties: Array.from(requestProps),
+        });
+        closeTradeModal();
+        OnlypolyUI.toast('Counter offer sent!');
+      };
+
+      const cancel = document.createElement('button');
+      cancel.className = 'btn ghost';
+      cancel.textContent = 'Cancel';
+      cancel.onclick = () => openTradeReview(originalTrade);
+
+      actions.appendChild(cancel);
+      actions.appendChild(send);
+      root.appendChild(actions);
+
+      tradeContent.appendChild(root);
+    }
+    renderNegotiateComposer();
+  }
+
   function closeTradeModal() {
-    tradeModal.classList.add('hidden');
+    tradeModal.classList.remove('visible');
   }
 
   tradeModal?.addEventListener('click', (e) => {
     if (e.target === tradeModal || e.target.classList.contains('modal-backdrop')) {
       closeTradeModal();
+    }
+  });
+
+  function openPropertiesModal() {
+    if (!state || !me.id) return;
+    const myPlayer = state.players[me.id];
+    if (!myPlayer) return;
+
+    // Prevent bankrupt players from viewing properties
+    if (myPlayer.bankrupt) {
+      OnlypolyUI.toast('You have no properties - you are bankrupt.', 'error');
+      return;
+    }
+
+    propertiesModal.classList.add('visible');
+    propertiesContent.innerHTML = '';
+
+    const ownedProperties = Object.entries(myPlayer.ownedProperties || {});
+
+    if (ownedProperties.length === 0) {
+      propertiesContent.innerHTML = '<div style="padding: 40px; text-align: center; color: #888;">You don\'t own any properties yet.</div>';
+      return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'properties-grid';
+
+    ownedProperties.sort(([a], [b]) => Number(a) - Number(b));
+
+    ownedProperties.forEach(([pid, own]) => {
+      const tile = state.board.find(t => t.id === Number(pid));
+      if (!tile) return;
+
+      const card = document.createElement('div');
+      card.className = 'property-display-card';
+
+      // Color bar at top
+      const colorBar = document.createElement('div');
+      colorBar.className = 'property-color-bar';
+      colorBar.style.backgroundColor = myPlayer.color || '#6647e0';
+      card.appendChild(colorBar);
+
+      // Property name
+      const name = document.createElement('div');
+      name.className = 'property-display-name';
+      name.textContent = tile.name;
+      card.appendChild(name);
+
+      // Property type/country
+      const type = document.createElement('div');
+      type.className = 'property-display-type';
+      type.textContent = tile.country || tile.type || '';
+      card.appendChild(type);
+
+      // Development status
+      const development = document.createElement('div');
+      development.className = 'property-display-development';
+      if (own.hotel) {
+        development.innerHTML = '🏨 <span>Hotel</span>';
+      } else if (own.houses > 0) {
+        development.innerHTML = '🏠'.repeat(own.houses) + ` <span>${own.houses} House${own.houses > 1 ? 's' : ''}</span>`;
+      } else {
+        development.innerHTML = '<span style="color: #888;">Undeveloped</span>';
+      }
+      card.appendChild(development);
+
+      // Property value
+      const value = document.createElement('div');
+      value.className = 'property-display-value';
+      value.textContent = `₩${tile.price || 0}`;
+      card.appendChild(value);
+
+      grid.appendChild(card);
+    });
+
+    propertiesContent.appendChild(grid);
+  }
+
+  propertiesModal?.addEventListener('click', (e) => {
+    if (e.target === propertiesModal || e.target.classList.contains('modal-backdrop')) {
+      propertiesModal.classList.remove('visible');
     }
   });
 
